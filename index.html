@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Mapa Interativo — Artists' Valley</title>
+
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Aviso para rodar o celular -->
+<div id="rotate-warning">
+  <div class="rotate-title">📱 Gire o celular</div>
+  <div class="rotate-text">
+    Para visualizar o mapa, use o modo <b>paisagem (horizontal)</b>.
+  </div>
+</div>
+
+<div class="app">
+  <div class="stage">
+    <div class="map-wrapper" id="mapWrapper">
+      <img id="mapImg" class="map-img" src="imagem/mapa.png" alt="Mapa do Artists' Valley com setores e mesas" />
+    </div>
+  </div>
+
+  <aside class="sidebar" id="sidebar">
+    <div class="header">
+      <img src="imagem/mapa.png" class="thumb" alt="Miniatura do mapa"/>
+      <div>
+        <div class="title">Mapa Interativo — Mesa a Mesa</div>
+        <div class="subtitle">Clique em uma mesa ou use a busca</div>
+      </div>
+    </div>
+
+    <div class="search">
+      <input id="searchInput" placeholder="Buscar artista..." />
+      <button class="btn" id="searchBtn">Buscar</button>
+    </div>
+
+    <div class="controls">
+      <button class="btn" id="zoomIn">Zoom +</button>
+      <button class="btn" id="zoomOut">Zoom −</button>
+      <button class="btn" id="resetZoom">Reset</button>
+      <button class="btn" id="togglePins">Alternar Pins</button>
+      <button class="btn" id="exportList">Exportar CSV</button>
+    </div>
+
+    <div class="sector-list" id="sectorList"></div>
+
+    <div id="results"></div>
+
+    <div class="list-title">Mesas</div>
+    <div id="mesaList"></div>
+
+    <div class="note">
+      Para melhor precisão, posso posicionar cada mesa individualmente usando coordenadas reais.
+    </div>
+  </aside>
+</div>
+
+<script src="main.js"></script>
+</body>
+</html>
