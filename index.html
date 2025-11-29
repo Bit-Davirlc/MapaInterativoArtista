@@ -1,64 +1,71 @@
-<!doctype html>
-<html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-br">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Mapa Interativo — Artists' Valley</title>
-
-<link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa Artists' Valley - CCXP25</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-<!-- Aviso para rodar o celular -->
-<div id="rotate-warning">
-  <div class="rotate-title">📱 Gire o celular</div>
-  <div class="rotate-text">
-    Para visualizar o mapa, use o modo <b>paisagem (horizontal)</b>.
-  </div>
-</div>
+    <header>
+        <div id="menu-btn" class="menu-icon"><span class="material-icons">menu</span></div>
+        <div class="logo-area">MAPA DOS ARTISTAS</div>
+    </header>
 
-<div class="app">
-  <div class="stage">
-    <div class="map-wrapper" id="mapWrapper">
-      <img id="mapImg" class="map-img" src="imagem/mapa.png" alt="Mapa do Artists' Valley com setores e mesas" />
+     <aside id="side-menu" class="sidebar">
+        <div class="sidebar-header">
+            <h3>Artistas Confirmados</h3>
+            <span id="close-menu" class="close-menu-btn">&times;</span>
+        </div>
+        
+        <div class="official-link-container">
+            <a href="https://www.ccxp.com.br/lineup-artists-valley" target="_blank" rel="noopener noreferrer" class="official-btn">
+                Ver Lineup Oficial CCXP <span class="material-icons official-icon">open_in_new</span>
+            </a>
+        </div>
+
+        <div class="filter-container">
+            <input type="text" id="search-input" placeholder="Buscar no mapa..." class="search-bar" aria-label="Buscar artistas">
+            
+            <div class="sort-wrapper">
+                <label for="sort-select">
+                <span class="material-icons sort-icon">sort</span> Ordenar:</label>
+                <select id="sort-select" class="sort-dropdown">
+                    <option value="alpha">Nome (A-Z)</option>
+                    <option value="table">Mesa (A-01)</option>
+                </select>
+            </div>
+
+            <div class="fav-toggle-wrapper">
+                <label class="switch">
+                    <input type="checkbox" id="show-favs-only" aria-label="Filtrar apenas favoritos">
+                    <span class="slider round"></span>
+                </label>
+                <span>Ver apenas favoritos</span>
+            </div>
+        </div>
+
+        <ul id="artist-list"></ul>
+    </aside>
+
+    <main id="map-container">
+        </main>
+
+    <footer>
+        <div class="entrance">ENTRADA PÚBLICO</div>
+    </footer>
+
+    <div id="artist-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal-btn">&times;</span>
+            <h2 id="modal-table-id"></h2>
+            <div id="modal-artist-info"></div>
+        </div>
     </div>
-  </div>
-
-  <aside class="sidebar" id="sidebar">
-    <div class="header">
-      <img src="imagem/mapa.png" class="thumb" alt="Miniatura do mapa"/>
-      <div>
-        <div class="title">Mapa Interativo — Mesa a Mesa</div>
-        <div class="subtitle">Clique em uma mesa ou use a busca</div>
-      </div>
-    </div>
-
-    <div class="search">
-      <input id="searchInput" placeholder="Buscar artista..." />
-      <button class="btn" id="searchBtn">Buscar</button>
-    </div>
-
-    <div class="controls">
-      <button class="btn" id="zoomIn">Zoom +</button>
-      <button class="btn" id="zoomOut">Zoom −</button>
-      <button class="btn" id="resetZoom">Reset</button>
-      <button class="btn" id="togglePins">Alternar Pins</button>
-      <button class="btn" id="exportList">Exportar CSV</button>
-    </div>
-
-    <div class="sector-list" id="sectorList"></div>
-
-    <div id="results"></div>
-
-    <div class="list-title">Mesas</div>
-    <div id="mesaList"></div>
-
-    <div class="note">
-      Para melhor precisão, posso posicionar cada mesa individualmente usando coordenadas reais.
-    </div>
-  </aside>
-</div>
-
-<script src="main.js"></script>
+    
+    <script src="data.js"></script>
+    <script src="main.js"></script>
 </body>
 </html>

@@ -1,602 +1,349 @@
-/**********************************************************
- *  MODO PAISAGEM NO CELULAR — Mostrar aviso se vertical
- **********************************************************/
-function updateOrientation() {
-    const isPortrait = window.innerHeight > window.innerWidth;
-    const warning = document.getElementById("rotate-warning");
-    const app = document.querySelector(".app");
+// --- 2. SISTEMA DE FAVORITOS (LocalStorage) ---
+let favorites = JSON.parse(localStorage.getItem('ccxp_favorites')) || [];
 
-    if (isPortrait) {
-        warning.style.display = "flex";
-        if (app) app.style.display = "none";
-    } else {
-        warning.style.display = "none";
-        if (app) app.style.display = "flex";
-    }
+function saveFavorites() {
+	localStorage.setItem('ccxp_favorites', JSON.stringify(favorites));
+	updateMapVisuals();
+	populateSidebar(); // Atualiza a sidebar para mostrar as estrelinhas
 }
 
-window.addEventListener("resize", updateOrientation);
-window.addEventListener("orientationchange", updateOrientation);
-updateOrientation();
-
-/**********************************************************
- *  ARTISTAS.TXT EMBUTIDO
- **********************************************************/
-const artistasRaw = `
-https://www.instagram.com/clara.pernambuco/?hl=en
-Clara Pernambuco
-Mesa do artists’ Valley: A09
-
-https://www.instagram.com/thejoco/
-Joco
-MESA DO ARTISTS’ VALLEY: A10
-
-https://www.instagram.com/huiolla/
-Huíolla
-MESA DO ARTISTS’ VALLEY: B06
-
-https://www.instagram.com/purin_naka/
-Purin Naka
-MESA DO ARTISTS’ VALLEY: M35
-
-https://www.instagram.com/imzeferino/
-Isadora Zeferino
-MESA DO ARTISTS’ VALLEY: K33-34
-
-https://www.instagram.com/karipola/
-Karipola
-MESA DO ARTISTS’ VALLEY: M35
-
-https://www.instagram.com/sukanne/?hl=en
-Sukanne
-MESA DO ARTISTS’ VALLEY: J07
-
-https://www.instagram.com/gem.i.ni/?hl=en
-Gem.i.ni
-MESA DO ARTISTS’ VALLEY: J07
-
-https://www.instagram.com/manda_fritas/?hl=en
-Manda
-MESA DO ARTISTS’ VALLEY: J05
-
-https://www.instagram.com/sayuritake/?hl=en
-Sayuritake
-MESA DO ARTISTS’ VALLEY: J04
-
-https://www.instagram.com/caioyo/?hl=en
-Caio Yo
-MESA DO ARTISTS’ VALLEY: J06
-
-https://www.instagram.com/bonnie.deaguiar
-Bonnie de Aguiar
-Mesa do artists’ Valley: J05
-
-https://www.instagram.com/4njuart/?hl=en
-4nju
-MESA DO ARTISTS’ VALLEY: A04
-
-https://www.instagram.com/kotodoodles/?hl=en
-Koto
-MESA DO ARTISTS’ VALLEY: A01
-
-https://www.instagram.com/little_gnoma/?hl=en
-Little Gnoma
-MESA DO ARTISTS’ VALLEY: A02
-
-https://www.instagram.com/makyume/?hl=en
-Makyume
-MESA DO ARTISTS’ VALLEY: A03
-
-https://www.instagram.com/mizuki_miart/?hl=en
-Raphaela Silva
-MESA DO ARTISTS’ VALLEY: A23
-
-https://www.instagram.com/gigishroom/?hl=en
-Gigishroom
-MESA DO ARTISTS’ VALLEY: A32
-
-https://www.instagram.com/esquitiniarte/?hl=en
-Alexandre Esquitini
-MESA DO ARTISTS’ VALLEY: L13
-
-https://www.instagram.com/amararts/?hl=en
-Amararts
-MESA DO ARTISTS’ VALLEY: J36
-
-https://www.instagram.com/clarissapaiva/?hl=en
-Clarissa Paiva
-MESA DO ARTISTS’ VALLEY: B26
-
-https://www.instagram.com/bananamisart/?hl=en
-Banana Misa
-MESA DO ARTISTS’ VALLEY: B24
-
-https://www.instagram.com/brunoomfr/?hl=en
-Bruno Freire
-MESA DO ARTISTS’ VALLEY: M33
-
-https://www.instagram.com/caelyudi/
-Cael Yudi
-MESA DO ARTISTS’ VALLEY: M27
-
-https://www.instagram.com/cahro.naka/
-Cahro Naka
-MESA DO ARTISTS’ VALLEY: B03
-
-https://www.instagram.com/danifranck/?hl=en
-Dani Franck
-MESA DO ARTISTS’ VALLEY: M34
-
-https://www.instagram.com/dessamore/?hl=en
-Dessamore
-MESA DO ARTISTS’ VALLEY: A38
-
-https://www.instagram.com/dokirosi/
-Doki Rosi
-MESA DO ARTISTS’ VALLEY: K37-38
-
-https://www.instagram.com/guibon__/?hl=en
-Gui Bon
-MESA DO ARTISTS’ VALLEY: L11-12
-
-https://www.instagram.com/guilherme.infante/?hl=en
-Guilherme Infante
-MESA DO ARTISTS’ VALLEY: L19-20
-
-https://www.instagram.com/harumoony/?hl=en
-Harumoony
-MESA DO ARTISTS’ VALLEY: B03
-
-https://www.instagram.com/hvmus/?hl=en
-Hvmus
-MESA DO ARTISTS’ VALLEY: B22
-
-https://www.instagram.com/putzjubileu/
-Jezz Farias
-MESA DO ARTISTS’ VALLEY: A09
-
-https://www.instagram.com/joninhaart/?hl=en
-Joninha
-MESA DO ARTISTS’ VALLEY: M06
-
-https://www.instagram.com/kaolporfirio/?hl=en
-Kaol Porfírio
-MESA DO ARTISTS’ VALLEY: A37
-
-https://www.instagram.com/kaokki_art/
-Kaokki
-MESA DO ARTISTS’ VALLEY: B24
-
-https://www.instagram.com/_kukkiia/
-Kukkiia
-MESA DO ARTISTS’ VALLEY: A25
-
-https://www.instagram.com/_kunogi/?hl=en
-Kunogi
-MESA DO ARTISTS’ VALLEY: J04
-
-https://www.instagram.com/laerteminotaura/
-Laerte
-Mesa do artists’ Valley: B39-40
-
-https://www.instagram.com/lariarts/?hl=en
-Lari Macedo
-MESA DO ARTISTS’ VALLEY: A35
-
-https://www.instagram.com/larkness_/?hl=en
-Lark
-MESA DO ARTISTS’ VALLEY: L27
-
-https://www.instagram.com/laura.arroz/
-Laura Arroz
-MESA DO ARTISTS’ VALLEY: K28
-
-https://www.instagram.com/lunecornio/
-Lune Córnio
-MESA DO ARTISTS’ VALLEY: K31
-
-https://www.instagram.com/marinafraguasarte/
-Marina Fraguas
-MESA DO ARTISTS’ VALLEY: B25
-
-https://www.instagram.com/artofmaryg/
-Mary
-MESA DO ARTISTS’ VALLEY: A08
-
-https://www.instagram.com/mthsmnds/?hl=en
-Matheus Mendes
-MESA DO ARTISTS’ VALLEY: D37
-
-https://www.instagram.com/emilioblablalogia/
-Milio
-Mesa do artists’ Valley: L13
-
-https://www.instagram.com/nagai13/?hl=en
-Nagai13
-MESA DO ARTISTS’ VALLEY: J08
-
-https://www.instagram.com/nyatche/?hl=en
-Natália Prata
-MESA DO ARTISTS’ VALLEY: J08
-
-https://www.instagram.com/paulomoreirap/?hl=en
-Paulo Moreira
-MESA DO ARTISTS’ VALLEY: D39-40
-
-https://www.instagram.com/kiolilo_/
-Kiolilo
-MESA DO ARTISTS’ VALLEY: K32
-
-https://www.instagram.com/_picolo/
-Picolo
-Mesa do artists’ Valley: C19-20
-
-https://www.instagram.com/ren_nolasco/
-Ren Nolasco
-MESA DO ARTISTS’ VALLEY: K35-36
-
-https://www.instagram.com/talessak
-Talessak
-MESA DO ARTISTS’ VALLEY: J13
-
-https://www.instagram.com/rodrigofcfreitas
-Rodrigo de Freitas
-MESA DO ARTISTS’ VALLEY: L14
-
-https://www.instagram.com/sapolendario/?hl=en
-Sapo Lendário
-MESA DO ARTISTS’ VALLEY: C01-02
-
-https://www.instagram.com/silvazuao/?hl=en
-Silva João
-MESA DO ARTISTS’ VALLEY: E06
-
-https://www.instagram.com/sunnymoum/?hl=en
-Sunny Moum
-MESA DO ARTISTS’ VALLEY: A05
-
-https://www.instagram.com/kahnvictor/?hl=en
-Victor Kahn
-MESA DO ARTISTS’ VALLEY: K40
-
-https://www.instagram.com/will.leite.will
-Will Leite
-Mesa do artists’ Valley: M21-22
-`;
-
-/**********************************************************
- * SECTORES (A–M)
- **********************************************************/
-const SECTOR_BOXES = {
-  "A": { left: 3,  top: 22, width: 15.7, height: 19 },
-  "B": { left: 3,  top: 46, width: 15.7, height: 19 },
-  
-  "C": { left: 22, top: 22, width: 15.7, height: 19 },
-  "D": { left: 22, top: 46, width: 15.6, height: 19 },
-
-  "E": { left: 41.7, top: 22, width: 15.7, height: 19 },
-  "F": { left: 54, top: 51, width: 10, height: 13 },
-
-  "G": { left: 67, top: 50, width: 9, height: 17 },
-
-  "H": { left: 78, top: 22, width: 15.7, height: 19 },
-  "I": { left: 78, top: 51, width: 15.7, height: 19 },
-
-  "J": { left: 62.5, top: 22, width: 17, height: 19 },
-  "K": { left: 92, top: 51, width: 22, height: 17 },
-
-  "L": { left: 117, top: 25, width: 21, height: 17 },
-  "M": { left: 117, top: 51, width: 21, height: 17 }
+function toggleFavorite(tableId) {
+	if (favorites.includes(tableId)) {
+		favorites = favorites.filter(id => id !== tableId);
+	} else {
+		favorites.push(tableId);
+	}
+	saveFavorites();
+}
+
+function isFavorite(tableId) {
+	return favorites.includes(tableId);
+}
+
+// Atualiza o visual (cor rosa) das mesas no mapa
+function updateMapVisuals() {
+	const allTables = document.querySelectorAll('.table');
+	allTables.forEach(table => {
+		const id = table.dataset.id;
+		if (favorites.includes(id)) {
+			table.classList.add('favorite');
+		} else {
+			table.classList.remove('favorite');
+		}
+	});
+}
+
+// --- 3. CONFIGURAÇÃO E GERAÇÃO DO MAPA ---
+const layoutConfig = [
+	{ type: 'column', blocks: ['A', 'B'] },
+	{ type: 'column', blocks: ['C', 'D'] },
+	{ type: 'column', blocks: ['E', 'F'] },
+	{ type: 'g-block', blocks: ['G'] },
+	{ type: 'column', blocks: ['H', 'I'] },
+	{ type: 'column', blocks: ['J', 'K'] },
+	{ type: 'column', blocks: ['L', 'M'] }
+];
+
+const blockSpecs = {
+	'large': { rows: [ [1, 10, 11, 20], [21, 30, 31, 40] ] },
+	'small': { rows: [ [1, 6], [7, 12] ] },
+	'G': { type: 'custom' }
 };
 
-
-/**********************************************************
- * PARSER DO TEXTO DE ARTISTAS
- **********************************************************/
-function extractMesasFromLine(line){
-    const clean = line.replace(/–|—/g, "-");
-    const regex = /([A-Z])\s*0*([0-9]{1,2})(?:\s*-\s*([0-9]{1,2}))?/gi;
-    const mesas = [];
-    let m;
-
-    while ((m = regex.exec(clean)) !== null) {
-        const sector = m[1].toUpperCase();
-        const start = parseInt(m[2]);
-        const end = m[3] ? parseInt(m[3]) : start;
-
-        for (let n = start; n <= end; n++) {
-            mesas.push({ sector, number: n });
-        }
-    }
-
-    return mesas;
+function getBlockType(letter) {
+	if (['A', 'B', 'C', 'D', 'J', 'K', 'L', 'M'].includes(letter)) return 'large';
+	if (['E', 'F', 'H', 'I'].includes(letter)) return 'small';
+	return 'custom';
 }
 
-function parseArtists(raw){
-    const lines = raw.split(/\n/).map(s => s.trim()).filter(Boolean);
-    const entries = [];
+const mapContainer = document.getElementById('map-container');
 
-    for (let i = 0; i < lines.length; i++) {
-        if (lines[i].startsWith("http")) {
-            const instagram = lines[i];
-            const name = lines[i + 1]?.trim() || "";
-            let mesaLine = null;
-
-            for (let j = i + 2; j < i + 6 && j < lines.length; j++) {
-                if (/MESA|Mesa/i.test(lines[j])) {
-                    mesaLine = lines[j];
-                    break;
-                }
-            }
-
-            if (name && mesaLine) {
-                entries.push({
-                    name,
-                    instagram,
-                    mesas: extractMesasFromLine(mesaLine)
-                });
-            }
-        }
-    }
-
-    return entries;
-}
-
-const artistsData = parseArtists(artistasRaw);
-
-/**********************************************************
- * INDEXAÇÃO: mesa → lista de artistas
- **********************************************************/
-const mesaMap = {};
-
-artistsData.forEach(artist => {
-    artist.mesas.forEach(m => {
-        const key = m.sector + m.number;
-        if (!mesaMap[key]) mesaMap[key] = [];
-        mesaMap[key].push({ name: artist.name, instagram: artist.instagram });
-    });
+layoutConfig.forEach(col => {
+	if (col.type === 'column') {
+		const colDiv = document.createElement('div');
+		colDiv.className = 'block-group';
+		col.blocks.forEach(blockLetter => colDiv.appendChild(createBlock(blockLetter)));
+		mapContainer.appendChild(colDiv);
+	} else if (col.type === 'g-block') {
+		const colDiv = document.createElement('div');
+		colDiv.className = 'block-g-container';
+		colDiv.appendChild(createCustomBlockG());
+		mapContainer.appendChild(colDiv);
+	}
 });
 
-/**********************************************************
- * POSICIONAMENTO DAS MESAS (pins)
- **********************************************************/
-function computePinPos(sector, n){
-    const box = SECTOR_BOXES[sector];
-    if (!box) return { left: 50, top: 50 };
+function createBlock(letter) {
+	const type = getBlockType(letter);
+	const spec = blockSpecs[type];
+	const blockDiv = document.createElement('div');
+	blockDiv.className = 'block';
 
-    const num = Math.min(Math.max(n, 1), 40);
+	const title = document.createElement('div');
+	title.className = 'block-title';
+	title.innerText = letter;
+	blockDiv.appendChild(title);
 
-    const row = num <= 20 ? 0 : 1;
-    const idx = num <= 20 ? num - 1 : num - 21;
-
-    const colRatio = idx / 19;
-    const top = box.top + (row === 0 ? 5 : box.height - 5);
-    const left = box.left + colRatio * box.width;
-
-    return { left, top };
+	spec.rows.forEach(rowConfig => {
+		const rowDiv = document.createElement('div');
+		rowDiv.className = 'table-row';
+		const seg1 = createTableSegment(letter, rowConfig[0], rowConfig[1]);
+		rowDiv.appendChild(seg1);
+		if (rowConfig.length > 2) {
+			const seg2 = createTableSegment(letter, rowConfig[2], rowConfig[3]);
+			rowDiv.appendChild(seg2);
+		}
+		blockDiv.appendChild(rowDiv);
+	});
+	return blockDiv;
 }
 
-/**********************************************************
- * GERAÇÃO DOS PINS
- **********************************************************/
-const mapWrapper = document.getElementById("mapWrapper");
+function createCustomBlockG() {
+	const wrapper = document.createElement('div');
+	wrapper.className = 'g-block-wrapper';
+	const grid = document.createElement('div');
+	grid.className = 'g-grid';
 
-function createPins(){
-    document.querySelectorAll(".pin").forEach(p => p.remove());
+	const label = document.createElement('div');
+	label.className = 'g-label';
+	label.innerText = 'G';
+	grid.appendChild(label);
 
-    Object.keys(mesaMap).forEach(key => {
-        const sector = key[0];
-        const num = parseInt(key.slice(1));
-        const pos = computePinPos(sector, num);
+	const gTables = [1, 2, 3, 4, 5, 6, 7, 8];
+	gTables.forEach(num => {
+		const tableId = `G${num.toString().padStart(2, '0')}`;
+		const tableDiv = createSingleTable(tableId, num);
+		tableDiv.classList.add(`g-pos-${num}`);
+		grid.appendChild(tableDiv);
+	});
 
-        const pin = document.createElement("div");
-        pin.className = "pin";
-        pin.dataset.mesa = key;
-        pin.style.left = pos.left + "%";
-        pin.style.top = pos.top + "%";
-        pin.textContent = (num % 10).toString();
-
-        pin.addEventListener("click", ev => {
-            ev.stopPropagation();
-            showPopup(pin, key);
-        });
-
-        mapWrapper.appendChild(pin);
-    });
+	wrapper.appendChild(grid);
+	return wrapper;
 }
 
-createPins();
-
-/**********************************************************
- * POPUP DA MESA
- **********************************************************/
-let currentPopup = null;
-
-function showPopup(pin, mesaKey){
-    closePopup();
-
-    const popup = document.createElement("div");
-    popup.className = "popup";
-
-    let html = `<div style="font-weight:bold;margin-bottom:6px">${mesaKey}</div>`;
-
-    mesaMap[mesaKey].forEach(a => {
-        html += `
-            <div style="margin-bottom:6px">
-                <a href="${a.instagram}" target="_blank">${a.name}</a>
-            </div>`;
-    });
-
-    html += `<div style="text-align:right"><button class="btn" onclick="closePopup()">Fechar</button></div>`;
-
-    popup.innerHTML = html;
-
-    mapWrapper.appendChild(popup);
-
-    const pinRect = pin.getBoundingClientRect();
-    const wrap = mapWrapper.getBoundingClientRect();
-
-    popup.style.left = (pinRect.left - wrap.left + 30) + "px";
-    popup.style.top = (pinRect.top - wrap.top - 20) + "px";
-
-    currentPopup = popup;
+function createTableSegment(letter, start, end) {
+	const segDiv = document.createElement('div');
+	segDiv.className = 'table-segment';
+	for (let i = start; i <= end; i++) {
+		const tableId = `${letter}${i.toString().padStart(2, '0')}`; 
+		segDiv.appendChild(createSingleTable(tableId, i));
+	}
+	return segDiv;
 }
 
-function closePopup(){
-    if (currentPopup){
-        currentPopup.remove();
-        currentPopup = null;
-    }
+// Helper function para criar a div da mesa
+function createSingleTable(tableId, label) {
+	const tableDiv = document.createElement('div');
+	tableDiv.className = 'table';
+	tableDiv.innerText = label;
+	tableDiv.dataset.id = tableId;
+
+	if (artistsData[tableId]) tableDiv.classList.add('occupied');
+
+	// Check de favorito na criação
+	if (isFavorite(tableId)) tableDiv.classList.add('favorite');
+
+	tableDiv.onclick = () => handleTableClick(tableId);
+	return tableDiv;
 }
 
-mapWrapper.addEventListener("click", closePopup);
 
-/**********************************************************
- * LISTA DE MESAS NA SIDEBAR
- **********************************************************/
-const mesaList = document.getElementById("mesaList");
+// --- 4. SIDEBAR LIST & FILTROS ---
+function populateSidebar() {
+	const artistListUl = document.getElementById('artist-list');
+	const showOnlyFavs = document.getElementById('show-favs-only').checked;
+	const sortMode = document.getElementById('sort-select').value; // 'alpha' ou 'table'
 
-function loadMesaList(){
-    const keys = Object.keys(mesaMap).sort((a,b) => {
-        if (a[0] !== b[0]) return a[0].localeCompare(b[0]);
-        return parseInt(a.slice(1)) - parseInt(b.slice(1));
-    });
+	artistListUl.innerHTML = ''; 
+	const allArtists = [];
 
-    mesaList.innerHTML = "";
+	// 1. Coleta e Filtra (Favoritos)
+	for (const [tableId, artists] of Object.entries(artistsData)) {
+		if (showOnlyFavs && !isFavorite(tableId)) continue;
 
-    keys.forEach(key => {
-        const item = document.createElement("div");
-        item.className = "mesa-item";
+		artists.forEach(artist => {
+			allArtists.push({
+				name: artist.name,
+				tableId: tableId,
+				sortName: artist.name.toLowerCase(),
+				isFav: isFavorite(tableId)
+			});
+		});
+	}
 
-        item.innerHTML = `
-            <div>
-                <strong>${key}</strong>
-                <div style="font-size:13px;color:#666">${mesaMap[key].map(a => a.name).join(", ")}</div>
-            </div>
-            <button class="btn" onclick="locateMesa('${key}')">Ver</button>
-        `;
+	// 2. ORDENAÇÃO (A Mágica acontece aqui)
+	allArtists.sort((a, b) => {
+		if (sortMode === 'table') {
+			// Ordena por mesa (A01, A02, B01...)
+			// numeric: true ajuda a entender que A2 vem antes de A10
+			return a.tableId.localeCompare(b.tableId, undefined, { numeric: true, sensitivity: 'base' });
+		} else {
+			// Padrão: Alfabética por nome
+			return a.sortName.localeCompare(b.sortName);
+		}
+	});
 
-        mesaList.appendChild(item);
-    });
+	if (allArtists.length === 0) {
+		artistListUl.innerHTML = '<li style="color:#aaa; justify-content:center;">Nenhum artista encontrado.</li>';
+		return;
+	}
+
+	// 3. Renderiza a Lista
+	allArtists.forEach(item => {
+		const li = document.createElement('li');
+
+		const iconType = item.isFav ? 'star' : 'star_border';
+		const activeClass = item.isFav ? 'active' : '';
+
+		// Destaque visual: Se estiver ordenando por mesa, mostramos a mesa primeiro
+		let contentHTML;
+		if (sortMode === 'table') {
+			// Modo Mesa: [Mesa] Nome
+			contentHTML = `
+				<button class="sidebar-fav-btn ${activeClass}" onclick="toggleSidebarFav(event, '${item.tableId}')">
+					<span class="material-icons">${iconType}</span>
+				</button>
+				<span style="color:var(--primary-color); font-weight:800; margin-right:10px;">${item.tableId}</span>
+				<span class="artist-name-span">${item.name}</span>
+			`;
+		} else {
+			// Modo Nome: Nome [Mesa]
+			contentHTML = `
+				<button class="sidebar-fav-btn ${activeClass}" onclick="toggleSidebarFav(event, '${item.tableId}')">
+					<span class="material-icons">${iconType}</span>
+				</button>
+				<span class="artist-name-span">${item.name}</span>
+				<span style="color:#888; font-size:0.8rem;">${item.tableId}</span>
+			`;
+		}
+
+		li.innerHTML = contentHTML;
+
+		li.onclick = (e) => {
+			if(e.target.closest('.sidebar-fav-btn')) return;
+			toggleMenu();
+			handleTableClick(item.tableId);
+			setTimeout(() => {
+				const tableEl = document.querySelector(`[data-id='${item.tableId}']`);
+				if(tableEl) tableEl.scrollIntoView({behavior: "smooth", block: "center", inline: "center"});
+			}, 300);
+		};
+
+		artistListUl.appendChild(li);
+	});
+
+	// Reaplica o filtro de busca se houver algo digitado
+	const searchTerm = document.getElementById('search-input').value;
+	if(searchTerm) {
+		triggerSearch(searchTerm);
+	}
 }
 
-loadMesaList();
-
-/**********************************************************
- * LOCALIZAR MESA
- **********************************************************/
-function locateMesa(key){
-    closePopup();
-
-    const pin = [...document.querySelectorAll(".pin")]
-        .find(p => p.dataset.mesa === key);
-
-    if (!pin) return;
-
-    pin.style.transform = "translate(-50%,-50%) scale(1.3)";
-    setTimeout(() => pin.style.transform = "translate(-50%,-50%)", 500);
-
-    showPopup(pin, key);
+// Helper de Busca separado para ser chamado de vários lugares
+function triggerSearch(term) {
+	term = term.toLowerCase();
+	const items = document.querySelectorAll('#artist-list li');
+	items.forEach(li => {
+		const text = li.textContent.toLowerCase();
+		li.style.display = text.includes(term) ? "flex" : "none"; // 'flex' para manter o alinhamento
+	});
 }
 
-window.locateMesa = locateMesa;
+// --- EVENT LISTENERS ---
 
-/**********************************************************
- * BUSCA DE ARTISTA
- **********************************************************/
-const resultsDiv = document.getElementById("results");
+// Ao mudar a ordenação, refaz a lista
+document.getElementById('sort-select').addEventListener('change', populateSidebar);
 
-function searchArtist(){
-    const q = document.getElementById("searchInput").value.toLowerCase().trim();
-    resultsDiv.innerHTML = "";
+// Ao mudar o switch de favoritos
+document.getElementById('show-favs-only').addEventListener('change', populateSidebar);
 
-    if (!q) return;
-
-    const found = [];
-
-    Object.keys(mesaMap).forEach(key => {
-        mesaMap[key].forEach(a => {
-            if (a.name.toLowerCase().includes(q)){
-                found.push({ mesa: key, ...a });
-            }
-        });
-    });
-
-    if (found.length === 0){
-        resultsDiv.innerHTML = `<div class="found">Nenhum artista encontrado.</div>`;
-        return;
-    }
-
-    const box = document.createElement("div");
-    box.className = "found";
-
-    found.forEach(f => {
-        const div = document.createElement("div");
-        div.innerHTML = `
-            <div><strong>${f.name}</strong> — ${f.mesa}</div>
-            <button class="btn" onclick="locateMesa('${f.mesa}')">Localizar</button>
-        `;
-        div.style.marginBottom = "8px";
-        box.appendChild(div);
-    });
-
-    resultsDiv.appendChild(box);
-
-    locateMesa(found[0].mesa);
-}
-
-document.getElementById("searchBtn").addEventListener("click", searchArtist);
-document.getElementById("searchInput").addEventListener("keydown", e => {
-    if (e.key === "Enter") searchArtist();
+// Ao digitar na busca
+document.getElementById('search-input').addEventListener('keyup', (e) => {
+	triggerSearch(e.target.value);
 });
 
-/**********************************************************
- * ZOOM
- **********************************************************/
-const img = document.getElementById("mapImg");
-let zoom = 1;
+// --- NOVA FUNÇÃO: Gerencia o clique na estrela da lista ---
+window.toggleSidebarFav = function(event, tableId) {
+	// Impede que o clique "suba" para o LI e abra o modal/mapa
+	event.stopPropagation(); 
 
-function setZoom(z){
-    zoom = z;
-    img.style.transform = `scale(${zoom})`;
+	// Alterna o favorito
+	toggleFavorite(tableId);
+
+	// Repopula a lista para atualizar o ícone visualmente
+	populateSidebar();
 }
 
-document.getElementById("zoomIn").addEventListener("click", () => setZoom(Math.min(zoom + 0.15, 3)));
-document.getElementById("zoomOut").addEventListener("click", () => setZoom(Math.max(zoom - 0.15, 0.6)));
-document.getElementById("resetZoom").addEventListener("click", () => setZoom(1));
-
-/**********************************************************
- * EXPORTAR CSV
- **********************************************************/
-function exportCSV(){
-    const lines = [["mesa","artista","instagram"]];
-
-    Object.keys(mesaMap).forEach(key => {
-        mesaMap[key].forEach(a => {
-            lines.push([key, a.name, a.instagram || ""]);
-        });
-    });
-
-    const csv = lines.map(row => row.join(",")).join("\n");
-
-    const blob = new Blob([csv], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = "mesas_artistas.csv";
-    a.click();
-
-    URL.revokeObjectURL(url);
-}
-
-document.getElementById("exportList").addEventListener("click", exportCSV);
-
-/**********************************************************
- * ALTERNAR PINS
- **********************************************************/
-document.getElementById("togglePins").addEventListener("click", () => {
-    document.querySelectorAll(".pin").forEach(pin => {
-        pin.style.display = pin.style.display === "none" ? "flex" : "none";
-    });
+// Event Listeners dos Filtros
+document.getElementById('show-favs-only').addEventListener('change', populateSidebar);
+document.getElementById('search-input').addEventListener('keyup', (e) => {
+	// Filtro visual simples sobre a lista gerada
+	const term = e.target.value.toLowerCase();
+	const items = document.querySelectorAll('#artist-list li');
+	items.forEach(li => {
+		const text = li.textContent.toLowerCase();
+		li.style.display = text.includes(term) ? "" : "none";
+	});
 });
+
+
+// --- 5. MODAL INTERATIVO ---
+const modal = document.getElementById('artist-modal');
+const modalTableId = document.getElementById('modal-table-id');
+const modalInfo = document.getElementById('modal-artist-info');
+const closeBtn = document.querySelector('.close-modal-btn'); 
+
+const menuBtn = document.getElementById('menu-btn');
+const closeMenuBtn = document.getElementById('close-menu');
+const sidebar = document.getElementById('side-menu');
+
+function handleTableClick(tableId) {
+	const artists = artistsData[tableId];
+	modalTableId.innerText = `Mesa ${tableId}`;
+	modalInfo.innerHTML = ''; 
+
+	// Botão de Favoritar dentro do modal
+	const isFav = isFavorite(tableId);
+	const favBtnHTML = `
+		<div class="fav-btn-container">
+			<button class="fav-action-btn ${isFav ? 'is-favorite' : ''}" onclick="clickFavBtn('${tableId}')">
+				<span class="material-icons">${isFav ? 'favorite' : 'favorite_border'}</span>
+				${isFav ? 'Mesa Favorita' : 'Favoritar Mesa'}
+			</button>
+		</div>
+	`;
+
+	if (artists) {
+		artists.forEach(artist => {
+			const card = document.createElement('div');
+			card.className = 'artist-card';
+			card.innerHTML = `<h3>${artist.name}</h3><a href="${artist.link}" target="_blank" rel="noopener noreferrer" class="artist-link">Ver Instagram</a>`;
+			modalInfo.appendChild(card);
+		});
+	} else {
+		modalInfo.innerHTML = '<p style="padding:10px;">Mesa sem informação.</p>';
+	}
+
+	// Adiciona o botão de favorito ao final
+	modalInfo.insertAdjacentHTML('beforeend', favBtnHTML);
+
+	modal.style.display = "block";
+}
+
+// Função chamada pelo botão dentro do HTML injetado
+window.clickFavBtn = function(tableId) {
+	toggleFavorite(tableId);
+	// Recarrega o modal para atualizar o botão visualmente
+	handleTableClick(tableId);
+}
+
+function toggleMenu() { sidebar.classList.toggle('open'); }
+
+if(menuBtn) menuBtn.onclick = toggleMenu;
+if(closeMenuBtn) closeMenuBtn.onclick = toggleMenu;
+
+if(closeBtn) closeBtn.onclick = () => modal.style.display = "none";
+window.onclick = (e) => { if (e.target == modal) modal.style.display = "none"; }
+document.addEventListener('keydown', (e) => { if (e.key === "Escape" && modal.style.display === "block") modal.style.display = "none"; });
+
+// Inicialização
+populateSidebar();
