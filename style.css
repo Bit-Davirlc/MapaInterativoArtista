@@ -49,6 +49,106 @@ header {
     color: white; border-radius: 4px; box-shadow: 0 0 10px rgba(0, 242, 255, 0.2);
 }
 
+/* --- ESTILOS DA ÁREA DIREITA DO HEADER --- */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    
+    /* NOVO: Fixa na direita absoluta */
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+/* Data de Criação */
+.creation-date {
+    font-size: 0.8rem;
+    color: #aaa;
+    font-weight: 600;
+    border-right: 1px solid rgba(255,255,255,0.1);
+    padding-right: 15px;
+}
+
+/* Ícone do GitHub */
+.github-link {
+    color: white;
+    transition: 0.3s;
+    display: flex;
+    align-items: center;
+}
+.github-link:hover {
+    color: var(--primary-color);
+    transform: scale(1.1);
+    filter: drop-shadow(0 0 5px var(--primary-color));
+}
+
+/* --- TOOLTIP (CAIXA DE AJUDA) --- */
+.help-container {
+    position: relative;
+    cursor: help;
+    display: flex;
+    align-items: center;
+}
+
+.help-icon {
+    font-size: 1.4rem;
+    color: var(--primary-color);
+    transition: 0.3s;
+}
+
+.help-container:hover .help-icon {
+    text-shadow: 0 0 10px var(--primary-color);
+    color: white;
+}
+
+/* A caixa de texto escondida */
+.tooltip-box {
+    visibility: hidden;
+    opacity: 0;
+    width: 220px;
+    background-color: rgba(15, 15, 35, 0.95);
+    color: #fff;
+    text-align: left;
+    border-radius: 8px;
+    padding: 12px;
+    position: absolute;
+    z-index: 1000;
+    top: 150%; /* Posiciona abaixo do ícone */
+    right: 0; /* Alinha à direita */
+    
+    /* Estilo visual */
+    border: 1px solid var(--glass-border);
+    box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+    font-size: 0.8rem;
+    line-height: 1.5;
+    
+    /* Animação */
+    transition: opacity 0.3s, transform 0.3s;
+    transform: translateY(-10px);
+    pointer-events: none; /* Evita bugar o mouse */
+}
+
+/* Triângulo do Tooltip */
+.tooltip-box::after {
+    content: "";
+    position: absolute;
+    bottom: 100%;
+    right: 8px; /* Alinha a seta com o ícone */
+    border-width: 6px;
+    border-style: solid;
+    border-color: transparent transparent rgba(15, 15, 35, 0.95) transparent;
+}
+
+/* Mostrar ao passar o mouse */
+.help-container:hover .tooltip-box {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+}
+
 /* --- SIDEBAR (MENU LATERAL) --- */
 .sidebar {
     height: 100%; width: 300px; position: fixed; z-index: 200; top: 0; left: -350px;
@@ -201,9 +301,37 @@ input:checked + .slider:before { transform: translateX(20px); }
 
 /* FOOTER */
 footer {
-    padding: 20px; text-align: center; background: rgba(15, 12, 41, 0.9);
+    flex-shrink: 0;
+    width: 100%;
+    padding: 15px 0;
+    background: rgba(11, 11, 32, 0.95); /* Fundo escuro sólido */
     border-top: 1px solid var(--glass-border);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 100;
 }
+
+.footer-content {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.footer-divider {
+    width: 1px; height: 30px; background: rgba(255,255,255,0.2);
+}
+
+/* Link GitHub Footer */
+.github-footer-link {
+    display: flex; align-items: center; gap: 8px;
+    color: #ccc; text-decoration: none; font-weight: 600; font-size: 0.9rem;
+    transition: 0.3s;
+}
+.github-footer-link:hover {
+    color: white; text-shadow: 0 0 10px white;
+}
+
 .entrance {
     background: transparent; border: 2px solid var(--primary-color); color: var(--primary-color);
     padding: 10px 40px; font-weight: bold; border-radius: 50px; text-transform: uppercase;
@@ -226,6 +354,34 @@ footer {
 .fav-action-btn { margin-top: 15px; background: transparent; border: 1px solid #777; color: #ddd; padding: 8px 20px; border-radius: 20px; cursor: pointer; width: 100%; display: flex; justify-content: center; gap: 8px; }
 .fav-action-btn.is-favorite { background: var(--secondary-color); border-color: var(--secondary-color); }
 
+/* --- ESTILO DA DATA (EVENT BADGE) --- */
+.event-badge {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    
+    /* Separador visual à direita */
+    border-right: 1px solid rgba(255, 255, 255, 0.2);
+    padding-right: 15px;
+    margin-right: 5px;
+}
+
+.event-badge .days {
+    font-size: 1.1rem;
+    font-weight: 900;
+    color: var(--primary-color); /* Ciano Neon */
+    letter-spacing: 1px;
+    text-shadow: 0 0 5px rgba(0, 242, 255, 0.5);
+}
+
+.event-badge .month {
+    font-size: 0.65rem;
+    color: #fff;
+    font-weight: 700;
+    letter-spacing: 2px;
+}
 
 /* ==========================================================================
    RESPONSIVIDADE: LAYOUT VERTICAL EM COLUNAS (MOBILE)
@@ -241,10 +397,9 @@ footer {
     }
 
     /* 2. Header Compacto */
-    header {
-        height: 60px; padding: 0 15px;
-        justify-content: space-between;
-        position: sticky; top: 0;
+    header { 
+        padding: 10px 15px; 
+        justify-content: space-between; /* Distribui: Menu ... Logo ... Ações */
     }
     .menu-icon { position: static; font-size: 1.6rem; }
     .logo-area { font-size: 0.8rem; padding: 5px 10px; max-width: 60%; }
@@ -361,4 +516,33 @@ footer {
         border-radius: 50%;
     }
     .g-grid .table { width: 100%; height: 100%; } /* Restaura tamanho para o Grid G */
+   
+    .creation-date {
+        display: none;
+    }
+    
+    .header-actions {
+        position: static; 
+        transform: none;
+        gap: 10px;
+    }
+
+        .event-badge {
+        padding-right: 8px;
+        margin-right: 0;
+    }
+    
+    .event-badge .days {
+        font-size: 0.9rem;
+    }
+    
+    .event-badge .month {
+        font-size: 0.5rem;
+    }
+    
+    /* Ajusta posição do tooltip no celular */
+    .tooltip-box {
+        right: -10px;
+        width: 200px;
+    }
 }
